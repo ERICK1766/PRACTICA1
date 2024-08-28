@@ -1,0 +1,28 @@
+#define echoPin 2               
+#define trigPin 4            
+int leds[4] = {13, 12, 14, 26}; 
+int thresholds[4] = {10, 20, 30, 100}; 
+void setup() {
+  Serial.begin(9600); 
+  pinMode(trigPin, OUTPUT);  
+  pinMode(echoPin, INPUT);  
+  for (int i = 0; i < 4; i++) pinMode(leds[i], OUTPUT);
+}
+void loop() {
+  long distance = getDistance();
+  Serial.print("Distance: "); Serial.print(distance); Serial.println(" cm");  
+  int ledIndex = 3; 
+  for (int i = 0; i < 3; i++) {
+    if (distance < thresholds[i]) {
+      ledIndex = i;
+      break;}
+  }
+  for (int i = 0; i < 4; i++) 
+    digitalWrite(leds[i], i == ledIndex ? HIGH : LOW);
+  delay(1000);  
+  }
+long getDistance() {
+  digitalWrite(trigPin, LOW); delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH); delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  return pulseIn(echoPin, HIGH) / 58.2;}
